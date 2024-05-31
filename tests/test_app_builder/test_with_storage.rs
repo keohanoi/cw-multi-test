@@ -1,15 +1,7 @@
 use crate::test_contracts;
 use crate::test_contracts::counter::{ CounterQueryMsg, CounterResponseMsg };
 use cosmwasm_std::{ to_json_binary, Empty, Order, Record, Storage, WasmMsg, Uint128, coins };
-use cw_multi_test::{
-    no_init,
-    AppBuilder,
-    Executor,
-    StorageSnapshot,
-    App,
-    BankSudo,
-    SudoMsg as CwSudoMsg,
-};
+use cw_multi_test::{ AppBuilder, Executor, StorageSnapshot, App, BankSudo, SudoMsg as CwSudoMsg };
 use std::collections::BTreeMap;
 use std::iter;
 use std::collections::HashMap;
@@ -111,12 +103,11 @@ fn building_app_with_custom_storage_should_work() {
     // counter should be 2
     assert_eq!(2, response.value);
     //Create a snaposhot
-    let mut snapshot = StorageSnapshot {
-        data: HashMap::new(),
-    };
+    let mut snapshot = StorageSnapshot::default();
     let codeid: u128 = 1;
-    snapshot = app.snapshot_storage(snapshot.clone(), codeid).unwrap();
-    // execute contract, this increments a counter
+
+    app.snapshot_storage(&mut snapshot, codeid).unwrap();
+    //execute contract, this increments a counter
     app.execute_contract(
         owner_addr,
         contract_addr.clone(),
@@ -128,7 +119,7 @@ fn building_app_with_custom_storage_should_work() {
         &[]
     ).unwrap();
 
-    app.load_snapshot(&snapshot, codeid);
+    app.load_snapshot(&snapshot, codeid).unwrap();
 
     // query contract for current counter value
     let response: CounterResponseMsg = app
@@ -148,7 +139,7 @@ fn building_app_with_custom_storage_should_work() {
         .ok();
     let balance_native_receipient = app.wrap().query_balance(&user, "btc").unwrap().amount;
     assert_eq!(Uint128::new(200000), balance_native_receipient);
-    app.load_snapshot(&snapshot, codeid);
+    app.load_snapshot(&snapshot, codeid).unwrap();
     let balance_native_receipient = app.wrap().query_balance(&user, "btc").unwrap().amount;
     assert_eq!(Uint128::new(100000), balance_native_receipient);
 }
