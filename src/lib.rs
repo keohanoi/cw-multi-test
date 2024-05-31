@@ -146,22 +146,39 @@ mod transactions;
 mod wasm;
 
 pub use crate::addresses::{
-    AddressGenerator, IntoAddr, IntoBech32, IntoBech32m, SimpleAddressGenerator,
+    AddressGenerator,
+    IntoAddr,
+    IntoBech32,
+    IntoBech32m,
+    SimpleAddressGenerator,
 };
-pub use crate::api::{MockApiBech32, MockApiBech32m};
+pub use crate::api::{ MockApiBech32, MockApiBech32m };
 pub use crate::app::{
-    custom_app, next_block, no_init, App, BasicApp, CosmosRouter, Router, SudoMsg,
+    custom_app,
+    next_block,
+    no_init,
+    App,
+    BasicApp,
+    CosmosRouter,
+    Router,
+    SudoMsg,
+    StorageSnapshot,
 };
-pub use crate::app_builder::{AppBuilder, BasicAppBuilder};
-pub use crate::bank::{Bank, BankKeeper, BankSudo};
+pub use crate::app_builder::{ AppBuilder, BasicAppBuilder };
+pub use crate::bank::{ Bank, BankKeeper, BankSudo };
 pub use crate::checksums::ChecksumGenerator;
-pub use crate::contracts::{Contract, ContractWrapper};
-pub use crate::executor::{AppResponse, Executor};
-pub use crate::gov::{Gov, GovAcceptingModule, GovFailingModule};
-pub use crate::ibc::{Ibc, IbcAcceptingModule, IbcFailingModule};
-pub use crate::module::{AcceptingModule, FailingModule, Module};
+pub use crate::contracts::{ Contract, ContractWrapper };
+pub use crate::executor::{ AppResponse, Executor };
+pub use crate::gov::{ Gov, GovAcceptingModule, GovFailingModule };
+pub use crate::ibc::{ Ibc, IbcAcceptingModule, IbcFailingModule };
+pub use crate::module::{ AcceptingModule, FailingModule, Module };
 pub use crate::staking::{
-    Distribution, DistributionKeeper, StakeKeeper, Staking, StakingInfo, StakingSudo,
+    Distribution,
+    DistributionKeeper,
+    StakeKeeper,
+    Staking,
+    StakingInfo,
+    StakingSudo,
 };
-pub use crate::stargate::{Stargate, StargateAccepting, StargateFailing};
-pub use crate::wasm::{ContractData, Wasm, WasmKeeper, WasmSudo};
+pub use crate::stargate::{ Stargate, StargateAccepting, StargateFailing };
+pub use crate::wasm::{ ContractData, Wasm, WasmKeeper, WasmSudo };
