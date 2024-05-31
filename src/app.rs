@@ -54,7 +54,7 @@ pub fn next_block(block: &mut BlockInfo) {
 }
 
 /// A struct to represent a snapshot of the storage.
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct StorageSnapshot {
     /// Mapping for store state
     pub data: HashMap<u128, HashMap<Vec<u8>, Vec<u8>>>,
@@ -66,11 +66,16 @@ impl Debug for StorageSnapshot {
     }
 }
 
-impl StorageSnapshot {
-    fn new(self, snapshot_id: u128, storage: &dyn Storage) -> StdResult<Self> {
-        let mut snapshot = StorageSnapshot {
+impl Default for StorageSnapshot {
+    fn default() -> Self {
+        StorageSnapshot {
             data: HashMap::new(),
-        };
+        }
+    }
+}
+
+impl StorageSnapshot {
+    fn new(&mut self, snapshot_id: u128, storage: &dyn Storage) -> StdResult<()> {
         let mut data_snapshot = HashMap::new();
         assert_eq!(self.data.contains_key(&snapshot_id), false, "snapshotId already exist");
 
@@ -81,9 +86,9 @@ impl StorageSnapshot {
             data_snapshot.insert(key, value);
         }
 
-        snapshot.data.insert(snapshot_id, data_snapshot);
+        self.data.insert(snapshot_id, data_snapshot);
 
-        Ok(snapshot)
+        Ok(())
     }
 
     fn apply(&self, snapshot_id: u128, storage: &mut dyn Storage) -> StdResult<()> {
@@ -119,7 +124,7 @@ pub struct BlockSnapshot {
     pub chain_id: String,
 }
 /// A struct to represent a snapshot of the block.
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct DataBlockSnapshot {
     pub data: HashMap<u128, BlockSnapshot>,
 }
@@ -129,26 +134,27 @@ impl Debug for DataBlockSnapshot {
         f.debug_struct("BlockSnapshot").field("data", &self.data).finish()
     }
 }
+impl Default for DataBlockSnapshot {
+    fn default() -> Self {
+        DataBlockSnapshot {
+            data: HashMap::new(),
+        }
+    }
+}
 
 impl DataBlockSnapshot {
-    pub fn new(self, info: BlockInfo, snapshot_id: u128) -> StdResult<Self> {
+    pub fn new(&mut self, info: BlockInfo, snapshot_id: u128) -> StdResult<()> {
         assert_eq!(self.data.contains_key(&snapshot_id), false, "snapshotId already exist");
-        let mut snapshot = BlockSnapshot::default();
-        let mut data = HashMap::new();
 
         // Iterate over all storage items and copy them to the snapshot.
-        snapshot = BlockSnapshot {
+        let snapshot = BlockSnapshot {
             height: info.height,
             time: info.time,
             chain_id: info.chain_id,
         };
-        data.insert(snapshot_id, snapshot);
+        self.data.insert(snapshot_id, snapshot);
 
-        let data_block_snapshot = DataBlockSnapshot {
-            data: data,
-        };
-
-        Ok(data_block_snapshot)
+        Ok(())
     }
 
     pub fn apply(&self, snapshot_id: u128, info: &mut BlockInfo) -> StdResult<()> {
@@ -191,9 +197,9 @@ impl<BankT, ApiT, StorageT, CustomT, WasmT, StakingT, DistrT, IbcT, GovT, Starga
     /// Takes a snapshot of the current storage state.
     pub fn snapshot_storage(
         &self,
-        snapshot: StorageSnapshot,
+        snapshot: &mut StorageSnapshot,
         snapshot_id: u128
-    ) -> StdResult<StorageSnapshot> {
+    ) -> StdResult<()> {
         StorageSnapshot::new(snapshot, snapshot_id, &self.storage)
     }
 
@@ -622,8 +628,8 @@ impl<BankT, ApiT, StorageT, CustomT, WasmT, StakingT, DistrT, IbcT, GovT, Starga
     pub fn snapshot_blockinfo(
         self,
         snapshot_id: u128,
-        snapshot: DataBlockSnapshot
-    ) -> StdResult<DataBlockSnapshot> {
+        snapshot: &mut DataBlockSnapshot
+    ) -> StdResult<()> {
         DataBlockSnapshot::new(snapshot, self.block, snapshot_id)
     }
 
