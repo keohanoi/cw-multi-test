@@ -4,7 +4,7 @@ use cosmwasm_std::{ to_json_binary, Empty, Order, Record, Storage, WasmMsg, Uint
 use cw_multi_test::{ AppBuilder, Executor, StorageSnapshot, App, BankSudo, SudoMsg as CwSudoMsg };
 use std::collections::BTreeMap;
 use std::iter;
-use std::collections::HashMap;
+
 
 #[derive(Default)]
 struct MyStorage(BTreeMap<Vec<u8>, Vec<u8>>);
@@ -42,7 +42,7 @@ fn building_app_with_custom_storage_should_work() {
     let label = "my-counter";
 
     // build the application with custom storage
-    let app_builder = AppBuilder::default();
+    let _app_builder = AppBuilder::default();
     //let mut app = app_builder.with_storage(MyStorage::default()).build(no_init);
     let mut app = App::default();
     // prepare user addresses
