@@ -1,6 +1,6 @@
-use cosmwasm_std::{Addr, Api, Binary, BlockInfo, CustomMsg, CustomQuery, Querier, Storage};
-use cw_multi_test::error::{bail, AnyResult};
-use cw_multi_test::{AppResponse, CosmosRouter, Module};
+use cosmwasm_std::{ Addr, Api, Binary, BlockInfo, CustomMsg, CustomQuery, Querier, Storage };
+use cw_multi_test::error::{ bail, AnyResult };
+use cw_multi_test::{ AppResponse, CosmosRouter, Module };
 use serde::de::DeserializeOwned;
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -15,6 +15,7 @@ mod test_with_staking;
 mod test_with_stargate;
 mod test_with_storage;
 mod test_with_wasm;
+mod test_ffi;
 
 const NO_MESSAGE: &str = "";
 
@@ -31,11 +32,9 @@ impl<ExecT, QueryT, SudoT> MyKeeper<ExecT, QueryT, SudoT> {
     }
 }
 
-impl<ExecT, QueryT, SudoT> Module for MyKeeper<ExecT, QueryT, SudoT>
-where
-    ExecT: Debug,
-    QueryT: Debug,
-    SudoT: Debug,
+impl<ExecT, QueryT, SudoT> Module
+    for MyKeeper<ExecT, QueryT, SudoT>
+    where ExecT: Debug, QueryT: Debug, SudoT: Debug
 {
     type ExecT = ExecT;
     type QueryT = QueryT;
@@ -48,11 +47,12 @@ where
         _router: &dyn CosmosRouter<ExecC = ExecC, QueryC = QueryC>,
         _block: &BlockInfo,
         _sender: Addr,
-        _msg: Self::ExecT,
-    ) -> AnyResult<AppResponse>
-    where
-        ExecC: CustomMsg + DeserializeOwned + 'static,
-        QueryC: CustomQuery + DeserializeOwned + 'static,
+        _msg: Self::ExecT
+    )
+        -> AnyResult<AppResponse>
+        where
+            ExecC: CustomMsg + DeserializeOwned + 'static,
+            QueryC: CustomQuery + DeserializeOwned + 'static
     {
         bail!(self.1);
     }
@@ -63,11 +63,12 @@ where
         _storage: &mut dyn Storage,
         _router: &dyn CosmosRouter<ExecC = ExecC, QueryC = QueryC>,
         _block: &BlockInfo,
-        _msg: Self::SudoT,
-    ) -> AnyResult<AppResponse>
-    where
-        ExecC: CustomMsg + DeserializeOwned + 'static,
-        QueryC: CustomQuery + DeserializeOwned + 'static,
+        _msg: Self::SudoT
+    )
+        -> AnyResult<AppResponse>
+        where
+            ExecC: CustomMsg + DeserializeOwned + 'static,
+            QueryC: CustomQuery + DeserializeOwned + 'static
     {
         bail!(self.3);
     }
@@ -78,7 +79,7 @@ where
         _storage: &dyn Storage,
         _querier: &dyn Querier,
         _block: &BlockInfo,
-        _request: Self::QueryT,
+        _request: Self::QueryT
     ) -> AnyResult<Binary> {
         bail!(self.2);
     }

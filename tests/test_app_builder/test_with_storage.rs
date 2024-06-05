@@ -4,7 +4,6 @@ use cosmwasm_std::{ to_json_binary, Empty, Order, Record, Storage, WasmMsg, Uint
 use cw_multi_test::{ AppBuilder, Executor, StorageSnapshot, App, BankSudo, SudoMsg as CwSudoMsg };
 use std::collections::BTreeMap;
 use std::iter;
-use std::collections::HashMap;
 
 #[derive(Default)]
 struct MyStorage(BTreeMap<Vec<u8>, Vec<u8>>);
