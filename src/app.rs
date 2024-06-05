@@ -39,18 +39,30 @@ use cosmwasm_std::{
     SystemError,
     SystemResult,
 };
+
 use serde::Deserialize;
 use serde::{ de::DeserializeOwned, Serialize };
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use cosmwasm_std::Timestamp;
-
+use std::process::Command;
 /// Advances the blockchain environment to the next block in tests, enabling developers to simulate
 /// time-dependent contract behaviors and block-related triggers efficiently.
 pub fn next_block(block: &mut BlockInfo) {
     block.time = block.time.plus_seconds(5);
     block.height += 1;
+}
+fn ffi(input: &[String]) -> StdResult<Vec<u8>> {
+    if input.is_empty() && input[0].is_empty() {
+        panic!("{}", "can't execute empty command");
+    }
+    let mut cmd = Command::new(&input[0]);
+    cmd.args(&input[1..]);
+    let output = cmd.output().expect("failed to execute command ");
+    let result = output.stdout;
+
+    Ok(result)
 }
 
 /// A struct to represent a snapshot of the storage.
@@ -579,6 +591,11 @@ impl<BankT, ApiT, StorageT, CustomT, WasmT, StakingT, DistrT, IbcT, GovT, Starga
         namespaces: &[&[u8]]
     ) -> Box<dyn Storage + 'a> {
         Box::new(prefixed_multilevel(&mut self.storage, namespaces))
+    }
+
+    ///ffi test
+    pub fn ffi(self, input: &[String]) -> StdResult<Vec<u8>> {
+        ffi(input)
     }
 }
 

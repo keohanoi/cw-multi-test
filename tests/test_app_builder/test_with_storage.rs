@@ -5,7 +5,6 @@ use cw_multi_test::{ AppBuilder, Executor, StorageSnapshot, App, BankSudo, SudoM
 use std::collections::BTreeMap;
 use std::iter;
 
-
 #[derive(Default)]
 struct MyStorage(BTreeMap<Vec<u8>, Vec<u8>>);
 
